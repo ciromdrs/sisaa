@@ -12,24 +12,24 @@ class GrupoDeTrabalho(db.Model):
     
     edital = blobstore.BlobReferenceProperty(required=True)
     
-    '''Data de início das submissões'''
+    #: Data de início das submissões
     ini_sub = db.StringProperty(required=True)
     
-    ''' Data de fim das submissões '''
+    #: Data de fim das submissões
     fim_sub = db.StringProperty(required=True)
     
-    '''Data de início das avaliações'''
+    #: Data de início das avaliações
     ini_aval = db.StringProperty(required=True) 
     
-    '''Data de fim das avaliações'''
+    #: Data de fim das avaliações
     fim_aval = db.StringProperty(required=True)
     
-    '''Indica se os artigos já foram aprovados''' 
+    #: Indica se os artigos já foram aprovados 
     finalizado = db.BooleanProperty()
     
     ''' Guarda quem finalizou o evento. 
     Em geral, é o próprio organizador, 
     mas também pode ser finalizado pelo administrador.'''
-    finalizador = db.StringProperty()
+    finalizador = db.StringProperty() # (db.ReferenceProperty())
     
     avaliadores = db.ListProperty() # (db.ReferenceProperty(Avaliador))
