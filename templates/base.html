@@ -1,0 +1,22 @@
+{% autoescape true %}
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>SISAA</title>
+        {% endblock %}
+    </head>
+    <body>
+		{% block barra_superior %}
+        {% endblock %}
+
+    	{% block mensagens %}
+    	{% endblock %}
+    	
+        {% block body %}
+        
+        {% endblock %}
+    </body>
+</html>
+{% endautoescape %}
