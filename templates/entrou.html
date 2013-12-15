@@ -1,0 +1,53 @@
+{% extends 'base.html' %} 
+{% block corpo %}
+
+<h1>Página teste</h1>
+
+<h2>Usuário</h2>
+
+Olá, {{usuario}}. Clique <a href='/logout'>aqui</a> para sair.
+
+<br/>
+<br/>
+
+<h2>Grupos de trabalho</h2>
+<a href='/cadastrarGT'>Cadastrar</a> grupo de trabalho.
+
+<br/>
+<br/>
+
+<h2>Credenciais</h2>
+Marque suas credenciais abaixo, salve e tente acessar as páginas.
+<form method='post'>
+	<div>
+		<input type='checkbox' name='admin' {{admin_checked}}>
+		<label for='admin'>Administrador</label>
+	</div>
+	
+	<div>
+		<input type='checkbox' name='aval' {{aval_checked}}>
+		<label for='aval'>Avaliador</label>
+	</div>
+	
+	<div>
+		<input type='checkbox' name='aluno' {{aluno_checked}}>
+		<label for='aluno'>Aluno</label>
+	</div>
+	
+	<div>
+		<input type='checkbox' name='org' {{org_checked}}>
+		<label for='aluno'>Organizador</label>
+	</div>
+	
+	<div>
+		<input type='submit' value='Salvar credenciais'>
+	</div>
+</form>
+
+<br/>
+<br/>
+
+<h2>Páginas</h2>
+<a href='/alu'>Página de Aluno</a> | <a href='/adm'>Página de Administrador</a> | <a href='/ava'>Página de Avaliador</a> | <a href='/org'>Página de Organizador</a> 
+
+{% endblock %}

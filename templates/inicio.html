@@ -1,4 +1,25 @@
 {% extends 'base.html' %}
 {% block corpo %}
-	Bem-vindo ao SISAA!
+<h1>Home</h1>
+
+<div class="password-form">
+	<form method="POST" action="/auth/password" class="horizontal-form">
+		<fieldset class="control-group">
+			<label for="email" class="control-label">Email</label>
+			<div class="controls">
+				<input type="text" name="email" class="input-medium">
+			</div>
+		</fieldset>
+		<fieldset class="control-group">
+			<label for="password" class="control-label">Password</label>
+			<div class="controls">
+				<input type="password" name="password" class="input-medium">
+			</div>
+		</fieldset>
+		<fieldset class="form-actions">
+			<button type="submit" class="btn">Login</button>
+		</fieldset>
+	</form>
+</div>
+
 {% endblock %}

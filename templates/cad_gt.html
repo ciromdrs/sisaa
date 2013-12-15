@@ -4,23 +4,23 @@
 {% block corpo %}
 Preencha os campos abaixo e pressione o botão para criar um grupo de trabalho.
 <form method="post" action="/cadastrarGT" enctype="multipart/form-data">
-	<div>Nome <input type="text" required></div>
+	<div>Nome <input type="text" required name='nome'></div>
 	
-	<div>Sigla <input type="text" required></div>
+	<div>Sigla <input type="text" required name='sigla'></div>
 	
-	<div>Edital <input type="file" required></div>
+	<div>Edital <input type="file" name='edital'></div>
 	
-	<div>Data de início das submissões <input type="text" required></div>
+	<div>Data de início das submissões <input type="date" required name='ini_sub'></div>
 	
-	<div>Data de fim das submissões <input type="text" required></div>
+	<div>Data de fim das submissões <input type="date" required name='fim_sub'></div>
 	
-	<div>Data de início das avaliações <input type="text" required></div>
+	<div>Data de início das avaliações <input type="date" required name='ini_ava'></div>
 	
-	<div>Data de fim das avaliações <input type="text" required></div>
+	<div>Data de fim das avaliações <input type="date" required name='fim_ava'></div>
 	
-	<div>Organizador <input type="text" required></div>
+	<div>Organizador <input type="text" required name='org'></div>
 	
-	<div>E-mails dos avaliadores <textarea required></textarea></div>
+	<div>E-mails dos avaliadores <textarea required name='emails_ava'></textarea></div>
 	
 	<div><input type="submit" value="Criar grupo de trabalho"></div>
 </form>

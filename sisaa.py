@@ -4,5 +4,14 @@ from handlers import *
 
 
 app = webapp.WSGIApplication([('/', InicioHandler),
-                              ('/cad_gt', CadGTHandler),],
+                              ('/adm', AdminHandler),
+                              ('/ava', AvalHandler),
+                              ('/alu', AlunoHandler),
+                              ('/org', OrgHandler),
+                              ('/entrou', EntrouHandler),
+                              ('/saiu', SaiuHandler),
+                              ('/logout', LogoutHandler),
+                              ('/cadastrarGT', CadGTHandler),
+                              #('/listarGT', 'CadGTHandler:listar')
+                              ],
                               debug=True)

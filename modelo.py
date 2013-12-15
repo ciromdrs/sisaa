@@ -1,35 +1,35 @@
-from google.appengine.ext import db, blobstore
-
-class Organizador(db.Model):
-    nome = db.StringProperty(required=True)
+# -*- coding:utf-8 -*-
+from google.appengine.ext import ndb, blobstore
+from engineauth.models import User
     
-class GrupoDeTrabalho(db.Model):
-    nome = db.StringProperty(required=True)
+class GrupoDeTrabalho(ndb.Model):
+    nome = ndb.StringProperty(required=True)
     
-    sigla = db.StringProperty(required=True)
+    sigla = ndb.StringProperty(required=True)
     
-    organizador = db.ReferenceProperty(Organizador)
+    organizador = ndb.StringProperty() # ReferenceProperty(User, required=True)
     
     edital = blobstore.BlobReferenceProperty(required=True)
     
-    #: Data de início das submissões
-    ini_sub = db.StringProperty(required=True)
+    # : Data de início das submissões
+    ini_sub = ndb.StringProperty() # ndb.DateProperty(required=True)
     
-    #: Data de fim das submissões
-    fim_sub = db.StringProperty(required=True)
+    # : Data de fim das submissões
+    fim_sub = ndb.StringProperty() # ndb.DateProperty(required=True)
     
-    #: Data de início das avaliações
-    ini_aval = db.StringProperty(required=True) 
+    # : Data de início das avaliações
+    ini_ava = ndb.StringProperty() # ndb.DateProperty(required=True) 
     
-    #: Data de fim das avaliações
-    fim_aval = db.StringProperty(required=True)
+    # : Data de fim das avaliações
+    fim_ava = ndb.StringProperty() # ndb.DateProperty(required=True)
     
-    #: Indica se os artigos já foram aprovados 
-    finalizado = db.BooleanProperty()
+    # : Indica se os artigos já foram aprovados 
+    finalizado = ndb.BooleanProperty(default=False)
     
     ''' Guarda quem finalizou o evento. 
-    Em geral, é o próprio organizador, 
-    mas também pode ser finalizado pelo administrador.'''
-    finalizador = db.StringProperty() # (db.ReferenceProperty())
+    Em geral, é o próprio organizador, mas também pode ser
+    finalizado pelo administrador.'''
+    finalizador = ndb.StringProperty() # ndb.ReferenceProperty(User)
     
-    avaliadores = db.ListProperty() # (db.ReferenceProperty(Avaliador))
+    avaliadores = ndb.StringProperty(repeated=True) # ndb.StringListProperty()
+
