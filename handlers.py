@@ -3,6 +3,7 @@ from google.appengine.ext import webapp
 import jinja2, os
 from engineauth.decorators import *
 from modelo import *
+import util
 
 jinja_env = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__) + '/templates/'),
@@ -50,11 +51,10 @@ class EntrouHandler(BaseHandler):
     def get(self):
         user = self.request.user if self.request.user else None
         self.responder('entrou.html', dict(usuario = user.auth_ids[0],
-                                                 admin_checked = 'checked' if user.adm_flag else '',
-                                                 aluno_checked = 'checked' if user.alu_flag else '',
-                                                 aval_checked = 'checked' if user.ava_flag else '',
-                                                 org_checked = 'checked' if user.org_flag else '',
-                                                 ))
+            admin_checked = 'checked' if user.adm_flag else '',
+            aluno_checked = 'checked' if user.alu_flag else '',
+            aval_checked = 'checked' if user.ava_flag else '',
+            org_checked = 'checked' if user.org_flag else '',))
     
     def post(self):
         admin = self.request.get('admin') == 'on' # on é a constante passada pelo html
@@ -115,7 +115,7 @@ class SaiuHandler(BaseHandler):
     def get(self):
         self.responder('saiu.html')
 
-class CadGTHandler(BaseHandler):
+class GTHandler(BaseHandler):
     '''Handler que cadastra grupos de trabalho'''
     
     @org_required
@@ -130,26 +130,28 @@ class CadGTHandler(BaseHandler):
                                                 # é o equivalente ao trim() do java.
         sigla = self.request.get('sigla').strip()
         # TODO: ver como cadastrar edital
-        ini_sub = self.request.get('ini_sub').strip()
-        fim_sub = self.request.get('fim_sub').strip()
-        ini_ava = self.request.get('ini_ava').strip()
-        fim_ava = self.request.get('fim_ava').strip()
+        # converte as strings de data vindas da tela para objetos datetime
+        ini_sub = util.str_para_date(self.request.get('ini_sub'))
+        fim_sub = util.str_para_date(self.request.get('fim_sub'))
+        ini_ava = util.str_para_date(self.request.get('ini_ava'))
+        fim_ava = util.str_para_date(self.request.get('fim_ava'))
         org = self.request.get('org').strip()
         emails_ava = self.request.get('emails_ava')
         emails_ava = emails_ava.split('\r\n') # quebrando os emails dos avaliadores em uma lista
         for e in emails_ava:
             e.strip()
         
+        # cria o grupo e guarda no banco
         gt = GrupoDeTrabalho(nome = nome,
-                             sigla = sigla,
-                             ini_sub = ini_sub,
-                             fim_sub = fim_sub,
-                             ini_ava = ini_ava,
-                             fim_ava = fim_ava,
-                             organizador = org,
-                             avaliadores = emails_ava)
-        
+            sigla = sigla,
+            ini_sub = ini_sub,
+            fim_sub = fim_sub,
+            ini_ava = ini_ava,
+            fim_ava = fim_ava,
+            organizador = org,
+            avaliadores = emails_ava)
         gt.put()
+        
         self.redirect('/entrou')
     
     def validarCampos(self):
@@ -165,9 +167,14 @@ class CadGTHandler(BaseHandler):
             campo = self.request.get(i).strip()
             assert campo, 'Campo obrigatório não preenchido.'
     
-    #def listar(self):
-    #    grupos = GrupoDeTrabalho.query()
-    #    
-    #    self.responder('listar_gt.html', )
+    def listar(self):
+        lista = GrupoDeTrabalho.query()
+        
+        grupos = []
+        
+        for g in lista:
+            grupos += [g.nome]
+        
+        self.responder('listar_gt.html', {'grupos' : grupos})
         
         

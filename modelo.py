@@ -12,16 +12,16 @@ class GrupoDeTrabalho(ndb.Model):
     edital = blobstore.BlobReferenceProperty(required=True)
     
     # : Data de início das submissões
-    ini_sub = ndb.StringProperty() # ndb.DateProperty(required=True)
+    ini_sub = ndb.DateProperty(required=True)
     
     # : Data de fim das submissões
-    fim_sub = ndb.StringProperty() # ndb.DateProperty(required=True)
+    fim_sub = ndb.DateProperty(required=True)
     
     # : Data de início das avaliações
-    ini_ava = ndb.StringProperty() # ndb.DateProperty(required=True) 
+    ini_ava = ndb.DateProperty(required=True) 
     
     # : Data de fim das avaliações
-    fim_ava = ndb.StringProperty() # ndb.DateProperty(required=True)
+    fim_ava = ndb.DateProperty(required=True)
     
     # : Indica se os artigos já foram aprovados 
     finalizado = ndb.BooleanProperty(default=False)
