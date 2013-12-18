@@ -173,6 +173,25 @@ class User(ndb.Expando):
 
     authenticated = ndb.BooleanProperty(default=False)
 
+    nome = ndb.StringProperty()
+    
+    #def _get_email(self):
+    #    '''Retorna o email do organizador.'''
+    #    return self.email
+    # 
+    #def _set_email(self, novo):
+    #    '''Verifica se o email já existe. Caso já exista, lança Exception.
+    #    :param: novo
+    #        O novo email a ser setado.'''
+    #    query = User.all(keys_only=True).filter('email', novo)
+    #    entity = query.get()
+    #    if entity:
+    #        raise Exception('O email deve ser único.')
+    #    else:
+    #        self.email = novo
+    # 
+    # : E-mail do organizador
+    #email_property = property(_get_email, _set_email)
     
     adm_flag = ndb.BooleanProperty(default=False)
     ava_flag = ndb.BooleanProperty(default=False)

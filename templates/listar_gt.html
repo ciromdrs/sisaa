@@ -4,7 +4,7 @@
 <h1>Grupos de trabalho</h1>
 
 {% for g in grupos %}
-	<div>{{g}}</div>
+	<div><a href='/gt/{{g.sigla}}'>{{g.nome}}</a></div>
 {% endfor %}
 
 <form action='/cadastrarGT'>

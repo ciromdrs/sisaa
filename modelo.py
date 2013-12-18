@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from google.appengine.ext import ndb, blobstore
 from engineauth.models import User
-    
+
 class GrupoDeTrabalho(ndb.Model):
     nome = ndb.StringProperty(required=True)
     
@@ -31,5 +31,5 @@ class GrupoDeTrabalho(ndb.Model):
     finalizado pelo administrador.'''
     finalizador = ndb.StringProperty() # ndb.ReferenceProperty(User)
     
-    avaliadores = ndb.StringProperty(repeated=True) # ndb.StringListProperty()
+    avaliadores = ndb.StringProperty(repeated=True)
 

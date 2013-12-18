@@ -1,9 +1,9 @@
 #-*- coding:utf-8 -*-
 from google.appengine.ext import webapp
-import jinja2, os
+import jinja2, os, util, re
 from engineauth.decorators import *
 from modelo import *
-import util
+
 
 jinja_env = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__) + '/templates/'),
@@ -12,7 +12,10 @@ jinja_env = jinja2.Environment(
 
 class BaseHandler(webapp.RequestHandler):
     '''Handler que serve como base para os outros extenderem.'''
-
+    
+    def erro_404(self):
+        self.responder('erro_404.html')
+    
     def get_messages(self, key='_messages'):
         try:
             return self.request.session.data.pop(key)
@@ -56,6 +59,7 @@ class EntrouHandler(BaseHandler):
             aval_checked = 'checked' if user.ava_flag else '',
             org_checked = 'checked' if user.org_flag else '',))
     
+    @login_required
     def post(self):
         admin = self.request.get('admin') == 'on' # on é a constante passada pelo html
         aluno = self.request.get('aluno') == 'on'
@@ -106,10 +110,32 @@ class AlunoHandler(BaseHandler):
         self.responder('aluno.html')
 
 class OrgHandler(BaseHandler):
-    '''Handler para testes'''
-    @org_required
+    '''Handler que gerencia organizadores.'''
+    @adm_required
     def get(self):
-        self.responder('org.html')
+        self.responder('cad_org.html')
+    
+    @adm_required
+    def post(self):
+        self.validar_campos()
+        nome = self.request.get('nome').strip()
+        email = self.request.get('email').strip()
+        org = User(auth_ids = [u'password:'+email], nome = nome, email = email, org_flag = True)
+        org.put()
+        
+    def validar_campos(self):
+        '''Valida os campos do formulário de cadastro de Organizador.'''
+
+        # validação da requisição
+        assert isinstance(self.request, webapp.Request), 'Requisição inválida.'
+        # validação dos campos
+        campos = ['nome','email']
+        for i in campos:
+            campo = self.request.get(i).strip()
+            assert campo, 'Campo obrigatório não preenchido.'
+        # validação do email
+        email = self.request.get('email')
+        assert re.match('[^@]+@[^@]+[^@]+', email), 'E-mail inválido'
 
 class SaiuHandler(BaseHandler):
     def get(self):
@@ -124,7 +150,7 @@ class GTHandler(BaseHandler):
     
     @org_required
     def post(self):
-        self.validarCampos()
+        self.validar_campos()
         
         nome = self.request.get('nome').strip() # strip retira espaços em branco ao redor da string.
                                                 # é o equivalente ao trim() do java.
@@ -135,46 +161,49 @@ class GTHandler(BaseHandler):
         fim_sub = util.str_para_date(self.request.get('fim_sub'))
         ini_ava = util.str_para_date(self.request.get('ini_ava'))
         fim_ava = util.str_para_date(self.request.get('fim_ava'))
-        org = self.request.get('org').strip()
+        if self.usuario.adm_flag:
+            org = self.request.get('org').strip()
+        else:
+            org = self.usuario.email
         emails_ava = self.request.get('emails_ava')
         emails_ava = emails_ava.split('\r\n') # quebrando os emails dos avaliadores em uma lista
-        for e in emails_ava:
-            e.strip()
+        for i in range(len(emails_ava)):
+            emails_ava[i] = emails_ava[i].strip()
+            if not emails_ava[i]: # retirando strings vazias
+                del emails_ava[i]
         
         # cria o grupo e guarda no banco
-        gt = GrupoDeTrabalho(nome = nome,
-            sigla = sigla,
-            ini_sub = ini_sub,
-            fim_sub = fim_sub,
-            ini_ava = ini_ava,
-            fim_ava = fim_ava,
-            organizador = org,
-            avaliadores = emails_ava)
+        gt = GrupoDeTrabalho(nome = nome, sigla = sigla, ini_sub = ini_sub,
+            fim_sub = fim_sub, ini_ava = ini_ava, fim_ava = fim_ava,
+            organizador = org, avaliadores = emails_ava)
         gt.put()
         
         self.redirect('/entrou')
     
-    def validarCampos(self):
-        '''Valida os campos do formulário de cadastro de GT.
-        :param: req:
-            A requisição contendo os dados do formulário.'''
-        
+    def validar_campos(self):
+        '''Valida os campos do formulário de cadastro de GT.'''
         # validação da requisição
-        assert self.request, 'Requisição inválida.'
+        assert isinstance(self.request, webapp.Request), 'Requisição inválida.'
         # validação dos campos obrigatórios
-        campos = ['nome','sigla','ini_sub','fim_sub','ini_ava','fim_ava','org','emails_ava']
+        campos = ['nome','sigla','ini_sub','fim_sub','ini_ava','fim_ava', 'emails_ava']
         for i in campos:
             campo = self.request.get(i).strip()
             assert campo, 'Campo obrigatório não preenchido.'
     
     def listar(self):
-        lista = GrupoDeTrabalho.query()
-        
-        grupos = []
-        
-        for g in lista:
-            grupos += [g.nome]
-        
+        '''Lista todos os grupos de trabalho para o usuário.'''
+        grupos = GrupoDeTrabalho.query()
         self.responder('listar_gt.html', {'grupos' : grupos})
+    
+    def exibir(self, sigla):
+        '''Exibe um GT.'''
+        print 'Exibindo GT'
+        #TODO: verificar quando o grupo não existe
+        g = GrupoDeTrabalho.query().filter(GrupoDeTrabalho.sigla == sigla).get()
+        print g
+        if g:
+            self.responder('gt.html', {'grupo' : g})
+        else:
+            self.erro_404()
         
         

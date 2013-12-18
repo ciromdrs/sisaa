@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block corpo %}
+	<h2>{{grupo.sigla}} - {{grupo.nome}}</h2>
+	<div>Submissões de {{grupo.ini_sub}} até {{grupo.fim_sub}}</div>
+	<div>Avaliações de {{grupo.ini_ava}} até {{grupo.fim_ava}}</div>
+	<div>Avaliadores:</div>
+	{% for a in grupo.avaliadores %}
+		<div>- {{a}}</div>
+	{% endfor %}	
+{% endblock %}

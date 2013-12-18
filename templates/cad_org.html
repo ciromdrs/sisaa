@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block corpo %}
+<h1>Cadastrar organizador</h1>
+
+<form method='post' action='/cadastrarOrg'>
+	<div>Nome <input type='text' required name='nome'></div>
+
+	<div>Email <input type='email' required name='email'></div>
+	
+	<input type='submit' value='Cadastrar'>
+</form>
+{% endblock %}

@@ -8,8 +8,6 @@ Preencha os campos abaixo e pressione o botão para criar um grupo de trabalho.
 	
 	<div>Sigla <input type="text" required name='sigla'></div>
 	
-	<div>Edital <input type="file" name='edital'></div>
-	
 	<div>Data de início das submissões <input type="date" required name='ini_sub'></div>
 	
 	<div>Data de fim das submissões <input type="date" required name='fim_sub'></div>
@@ -17,9 +15,9 @@ Preencha os campos abaixo e pressione o botão para criar um grupo de trabalho.
 	<div>Data de início das avaliações <input type="date" required name='ini_ava'></div>
 	
 	<div>Data de fim das avaliações <input type="date" required name='fim_ava'></div>
-	
+	{% if admin_flag %}
 	<div>Organizador <input type="text" required name='org'></div>
-	
+	{% endif %}
 	<div>E-mails dos avaliadores <textarea required name='emails_ava'></textarea></div>
 	
 	<div><input type="submit" value="Criar grupo de trabalho"></div>
