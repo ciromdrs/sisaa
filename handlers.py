@@ -168,9 +168,9 @@ class GTHandler(BaseHandler):
         emails_ava = emails_ava.split('\r\n') # quebrando os emails dos avaliadores em uma lista
         for i in range(len(emails_ava)):
             emails_ava[i] = emails_ava[i].strip()
-            if emails_ava[i]: # cadastrando avaliadores
-                a = User(auth_ids = [u'password:' + emails_ava[i]], email = emails_ava[i], ava_flag = True)
-                a.put()
+            #if emails_ava[i]: # cadastrando avaliadores
+            #    a = User(auth_ids = [u'password:' + emails_ava[i]], email = emails_ava[i], ava_flag = True)
+            #    a.put()
             if not emails_ava[i]: # retirando strings vazias
                 del emails_ava[i]
         
