@@ -5,6 +5,7 @@ from engineauth.models import User
 class GrupoDeTrabalho(ndb.Model):
     nome = ndb.StringProperty(required=True)
     
+    #TODO: barrar siglas duplicadas com gatilho antes do put()
     sigla = ndb.StringProperty(required=True)
     
     organizador = ndb.StringProperty() # ReferenceProperty(User, required=True)

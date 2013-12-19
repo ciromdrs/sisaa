@@ -172,26 +172,8 @@ class User(ndb.Expando):
     email = ndb.StringProperty(indexed=False)
 
     authenticated = ndb.BooleanProperty(default=False)
-
-    nome = ndb.StringProperty()
     
-    #def _get_email(self):
-    #    '''Retorna o email do organizador.'''
-    #    return self.email
-    # 
-    #def _set_email(self, novo):
-    #    '''Verifica se o email já existe. Caso já exista, lança Exception.
-    #    :param: novo
-    #        O novo email a ser setado.'''
-    #    query = User.all(keys_only=True).filter('email', novo)
-    #    entity = query.get()
-    #    if entity:
-    #        raise Exception('O email deve ser único.')
-    #    else:
-    #        self.email = novo
-    # 
-    # : E-mail do organizador
-    #email_property = property(_get_email, _set_email)
+    nome = ndb.StringProperty()
     
     adm_flag = ndb.BooleanProperty(default=False)
     ava_flag = ndb.BooleanProperty(default=False)
@@ -400,9 +382,15 @@ class User(ndb.Expando):
         for auth_id in user_values['auth_ids']:
             if cls.get_by_auth_id(auth_id):
                 raise DuplicatePropertyError(value=['auth_id'])
-
+        
         user = cls(**user_values)
+        
+        for i in auth_ids: # adicionando email
+            if i.startswith('password:'):
+                user.email = i[9:]
+        
         user.put()
+        
         return user
     create_user = _create_user
 

@@ -53,7 +53,7 @@ class EntrouHandler(BaseHandler):
     @login_required
     def get(self):
         user = self.request.user if self.request.user else None
-        self.responder('entrou.html', dict(usuario = user.auth_ids[0],
+        self.responder('entrou.html', dict(usuario = user.email,
             admin_checked = 'checked' if user.adm_flag else '',
             aluno_checked = 'checked' if user.alu_flag else '',
             aval_checked = 'checked' if user.ava_flag else '',
@@ -111,6 +111,10 @@ class AlunoHandler(BaseHandler):
 
 class OrgHandler(BaseHandler):
     '''Handler que gerencia organizadores.'''
+    @org_required
+    def teste(self):
+        self.responder('org.html')
+    
     @adm_required
     def get(self):
         self.responder('cad_org.html')
@@ -122,20 +126,18 @@ class OrgHandler(BaseHandler):
         email = self.request.get('email').strip()
         org = User(auth_ids = [u'password:'+email], nome = nome, email = email, org_flag = True)
         org.put()
+        self.redirect('/entrou')
         
     def validar_campos(self):
         '''Valida os campos do formulário de cadastro de Organizador.'''
-
-        # validação da requisição
         assert isinstance(self.request, webapp.Request), 'Requisição inválida.'
-        # validação dos campos
         campos = ['nome','email']
         for i in campos:
             campo = self.request.get(i).strip()
             assert campo, 'Campo obrigatório não preenchido.'
-        # validação do email
-        email = self.request.get('email')
-        assert re.match('[^@]+@[^@]+[^@]+', email), 'E-mail inválido'
+        # TODO: validar email
+        # email = self.request.get('email')
+        # assert re.match('[^@]+@[^@]+\.[^@]+', email), 'E-mail inválido'
 
 class SaiuHandler(BaseHandler):
     def get(self):
@@ -161,14 +163,14 @@ class GTHandler(BaseHandler):
         fim_sub = util.str_para_date(self.request.get('fim_sub'))
         ini_ava = util.str_para_date(self.request.get('ini_ava'))
         fim_ava = util.str_para_date(self.request.get('fim_ava'))
-        if self.usuario.adm_flag:
-            org = self.request.get('org').strip()
-        else:
-            org = self.usuario.email
+        org = self.usuario.email 
         emails_ava = self.request.get('emails_ava')
         emails_ava = emails_ava.split('\r\n') # quebrando os emails dos avaliadores em uma lista
         for i in range(len(emails_ava)):
             emails_ava[i] = emails_ava[i].strip()
+            if emails_ava[i]: # cadastrando avaliadores
+                a = User(auth_ids = [u'password:' + emails_ava[i]], email = emails_ava[i], ava_flag = True)
+                a.put()
             if not emails_ava[i]: # retirando strings vazias
                 del emails_ava[i]
         
@@ -182,25 +184,24 @@ class GTHandler(BaseHandler):
     
     def validar_campos(self):
         '''Valida os campos do formulário de cadastro de GT.'''
-        # validação da requisição
         assert isinstance(self.request, webapp.Request), 'Requisição inválida.'
         # validação dos campos obrigatórios
         campos = ['nome','sigla','ini_sub','fim_sub','ini_ava','fim_ava', 'emails_ava']
         for i in campos:
             campo = self.request.get(i).strip()
             assert campo, 'Campo obrigatório não preenchido.'
+        # TODO: validar emails
+        # for e in self.request.get('emails_ava'):
+        #    assert re.match('\w', e), 'E-mail inválido'
     
     def listar(self):
         '''Lista todos os grupos de trabalho para o usuário.'''
-        grupos = GrupoDeTrabalho.query()
+        grupos = GrupoDeTrabalho.query(GrupoDeTrabalho.organizador == self.usuario.email)
         self.responder('listar_gt.html', {'grupos' : grupos})
     
     def exibir(self, sigla):
         '''Exibe um GT.'''
-        print 'Exibindo GT'
-        #TODO: verificar quando o grupo não existe
         g = GrupoDeTrabalho.query().filter(GrupoDeTrabalho.sigla == sigla).get()
-        print g
         if g:
             self.responder('gt.html', {'grupo' : g})
         else:
